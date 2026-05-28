@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require('winston');
 const path = require('path');
-require('dotenv').config({ silent: true });
+require('dotenv').config({ quiet: true });
 
 const logLevel = process.env.LOG_LEVEL || 'info';
 const logFile = process.env.LOG_FILE || 'logs/app.log';

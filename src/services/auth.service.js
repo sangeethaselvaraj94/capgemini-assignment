@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserRepository = require('../repositories/user.repository');
-require('dotenv').config({ silent: true });
+require('dotenv').config({ quiet: true });
 
 const SALT_ROUNDS = 10;
 

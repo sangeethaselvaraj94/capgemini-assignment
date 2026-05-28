@@ -1,6 +1,4 @@
 # capgemini-assignment
-Rest API Backend for Capgemini assignment
-
 This repository contains a production-ready Node.js + Express REST API for managing projects and tasks with JWT authentication, input validation, structured logging and tests. The project uses MySQL as the datastore.
 
 ## Prerequisites
@@ -102,9 +100,6 @@ Install via Helm (defaults from `charts/capgemini-assignment/values.yaml`):
 helm install my-capgemini charts/capgemini-assignment
 ```
 
-Notes:
-- The chart is minimal; update `values.yaml` to set a container registry, resource requests/limits, and any ingress rules required by your cluster.
-- Store `JWT_SECRET` and DB passwords in a secret manager or Kubernetes `Secret` rather than committing them.
 
 ## Database schema & migrations
 
@@ -123,19 +118,4 @@ Schema is in `database/schema.sql` and a migration runner is at `database/migrat
 
 Winston is configured at `src/utils/logger.js`. Logs are written to console and to the file configured by `LOG_FILE` in the `.env`.
 
-## Notes & troubleshooting
-
-- If you see database connection errors during development, confirm MySQL credentials and that the DB server allows connections from your host.
-- If running inside Docker, ensure the DB host is reachable from the container (use service name for docker-compose networking).
-- Keep `JWT_SECRET` and other secrets out of source control — use `.env.local` or your environment/secret manager.
-
-## Next steps & suggestions
-
-- Add migrations with a tool like `knex` or `db-migrate` for incremental migrations.
-- Add CI (GitHub Actions) to run tests and build/publish Docker images.
-- Add more integration tests (projects/tasks flows) and e2e tests if needed.
-
----
-
-If you'd like, I can add a `README` section with example curl commands for each endpoint, or scaffold a GitHub Actions workflow to run tests and build images on push.
 

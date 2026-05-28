@@ -1,5 +1,5 @@
 const rateLimit = require('express-rate-limit');
-require('dotenv').config({ silent: true });
+require('dotenv').config({ quiet: true });
 
 const rateLimiter = rateLimit({
   windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,

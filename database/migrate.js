@@ -3,7 +3,7 @@
 const mysql = require('mysql2/promise');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ silent: true });
+require('dotenv').config({ quiet: true });
 
 const runMigration = async () => {
   const connection = await mysql.createConnection({

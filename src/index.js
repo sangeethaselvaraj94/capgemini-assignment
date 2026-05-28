@@ -1,3 +1,5 @@
+require('dotenv').config({ quiet: true });
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -11,7 +13,6 @@ const taskRoutes = require('./routes/task.routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../docs/swagger.json');
 
-require('dotenv').config({ silent: true });
 require('./config/database');
 
 const app = express();
