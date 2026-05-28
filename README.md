@@ -30,6 +30,11 @@ Minimum required env vars (see `.env`):
 - `JWT_SECRET`
 - `PORT` (defaults to 3000)
 
+Optional SSL env vars:
+- `SSL_KEY_PATH` — path to the private key file
+- `SSL_CERT_PATH` — path to the certificate file
+- `SSL_PASSPHRASE` — optional passphrase for the private key
+
 3. Create the database and run migrations
 
 ```bash
@@ -46,6 +51,7 @@ npm start
 ```
 
 The API will be available at `http://localhost:3000` (or the port configured in `.env`).
+If `SSL_KEY_PATH` and `SSL_CERT_PATH` are configured, the app will start an HTTPS server at `https://localhost:3000`.
 
 Endpoints (high level)
 - `POST /api/auth/register` — register a user
@@ -56,6 +62,8 @@ Endpoints (high level)
 
 Use the `Authorization: Bearer <token>` header for protected endpoints.
 
+API documentation is available at `http://localhost:3000/api/docs` after starting the server.
+
 ## Running tests
 
 Unit and integration tests are written with Jest and Supertest. To run tests:
@@ -65,6 +73,26 @@ npm test
 ```
 
 Tests run with `NODE_ENV=test` so the code avoids trying to connect to the real DB during unit tests.
+
+## SSL support
+
+The application can run in HTTPS mode when the following environment variables are set:
+
+- `SSL_KEY_PATH` — path to the private key file
+- `SSL_CERT_PATH` — path to the certificate file
+- `SSL_PASSPHRASE` — optional passphrase for the private key
+
+Create a self-signed certificate for local development:
+
+```bash
+mkdir -p certs
+openssl req -x509 -newkey rsa:4096 -nodes -keyout certs/key.pem -out certs/cert.pem -days 365 \
+  -subj "/C=US/ST=State/L=City/O=Org/CN=localhost"
+```
+
+Then update `.env` or `.env.local` and start the server as normal.
+
+When SSL is configured, use `https://localhost:3000`.
 
 ## Docker (local)
 
@@ -80,6 +108,8 @@ Alternatively use docker-compose:
 ```bash
 docker-compose up --build
 ```
+
+If HTTPS is enabled, make sure the `certs` directory exists in the project root so the container can access `./certs/key.pem` and `./certs/cert.pem`.
 
 ## Kubernetes & Helm (deployment)
 

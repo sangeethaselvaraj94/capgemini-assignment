@@ -1,5 +1,8 @@
 require('dotenv').config({ quiet: true });
 
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -44,6 +47,26 @@ app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 
+const loadSslOptions = () => {
+  const certPath = process.env.SSL_CERT_PATH;
+  const keyPath = process.env.SSL_KEY_PATH;
+
+  if (!certPath || !keyPath) {
+    return null;
+  }
+
+  try {
+    return {
+      cert: fs.readFileSync(path.resolve(certPath), 'utf8'),
+      key: fs.readFileSync(path.resolve(keyPath), 'utf8'),
+      passphrase: process.env.SSL_PASSPHRASE || undefined,
+    };
+  } catch (error) {
+    logger.error('Failed to load SSL certificate or key: %s', error.message);
+    process.exit(1);
+  }
+};
+
 process.on('unhandledRejection', (reason) => {
   logger.error('Unhandled Rejection: %s', reason);
   process.exit(1);
@@ -55,9 +78,17 @@ process.on('uncaughtException', (error) => {
 });
 
 if (require.main === module) {
-  app.listen(port, () => {
-    logger.info('Server started on port %d', port);
-  });
+  const sslOptions = loadSslOptions();
+
+  if (sslOptions) {
+    https.createServer(sslOptions, app).listen(port, () => {
+      logger.info('HTTPS server started on port %d', port);
+    });
+  } else {
+    app.listen(port, () => {
+      logger.info('Server started on port %d', port);
+    });
+  }
 }
 
 module.exports = app;
