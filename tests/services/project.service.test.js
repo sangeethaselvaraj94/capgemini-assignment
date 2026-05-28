@@ -37,16 +37,24 @@ describe('ProjectService', () => {
   });
 
   test('updateProject - success', async () => {
-    ProjectRepository.getProjectById.mockResolvedValue({ id: 2 });
+    ProjectRepository.getProjectById
+      .mockResolvedValueOnce({ id: 2, name: 'old' })
+      .mockResolvedValueOnce({ id: 2, name: 'new' });
     ProjectRepository.updateProject.mockResolvedValue(true);
-    ProjectRepository.getProjectById.mockResolvedValueOnce({ id: 2 }).mockResolvedValueOnce({ id: 2, name: 'updated' });
-
-    ProjectRepository.getProjectById.mockResolvedValue({ id: 2, name: 'old' });
-    ProjectRepository.updateProject.mockResolvedValue(true);
-    ProjectRepository.getProjectById.mockResolvedValue({ id: 2, name: 'new' });
 
     const res = await ProjectService.updateProject(2, { name: 'new', description: 'd' });
     expect(res).toHaveProperty('id', 2);
+    expect(res).toHaveProperty('name', 'new');
+    expect(ProjectRepository.updateProject).toHaveBeenCalledWith(2, { name: 'new', description: 'd' });
+  });
+
+  test('deleteProject - success', async () => {
+    ProjectRepository.getProjectById.mockResolvedValue({ id: 3 });
+    ProjectRepository.deleteProject.mockResolvedValue(true);
+
+    const res = await ProjectService.deleteProject(3);
+    expect(res).toEqual({ deleted: true });
+    expect(ProjectRepository.deleteProject).toHaveBeenCalledWith(3);
   });
 
   test('deleteProject - not found', async () => {

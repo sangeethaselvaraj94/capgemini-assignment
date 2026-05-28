@@ -110,6 +110,15 @@ Notes:
 
 Schema is in `database/schema.sql` and a migration runner is at `database/migrate.js`. The migration script will create the database (if missing) and run the schema statements.
 
+## Trade-offs
+
+- `mysql2` with raw SQL was chosen for simplicity and direct control over queries, but it requires more manual query handling than an ORM or query builder.
+- JWT provides a stateless authentication model that is easier to scale, while the trade-off is that token revocation and session invalidation require additional infrastructure.
+- The service/repository separation keeps business logic testable and easier to mock, but it also adds application boilerplate compared to a smaller controller-centric design.
+- The current test suite relies on mocked persistence for fast unit feedback; end-to-end or integration tests are still valuable to validate the real database and schema behavior.
+- For caching and scaling, using Redis would be a natural next step for session storage, rate-limit state, or frequently-read project/task metadata, but it adds operational complexity and another service dependency.
+- Security posture should include secure cookie/JWT handling, environment-based secret management, and database credentials stored outside source control. Scaling the API also benefits from horizontal stateless app instances behind a load balancer with shared cache or session state.
+
 ## Logging
 
 Winston is configured at `src/utils/logger.js`. Logs are written to console and to the file configured by `LOG_FILE` in the `.env`.

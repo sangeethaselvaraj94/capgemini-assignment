@@ -45,12 +45,24 @@ describe('TaskService', () => {
   });
 
   test('updateTask - success', async () => {
-    TaskRepository.getTaskById.mockResolvedValue({ id: 7 });
+    TaskRepository.getTaskById
+      .mockResolvedValueOnce({ id: 7, title: 'old' })
+      .mockResolvedValueOnce({ id: 7, title: 'updated' });
     TaskRepository.updateTask.mockResolvedValue(true);
-    TaskRepository.getTaskById.mockResolvedValue({ id: 7, title: 'updated' });
 
     const res = await TaskService.updateTask(7, { title: 'updated' });
     expect(res).toHaveProperty('id', 7);
+    expect(res).toHaveProperty('title', 'updated');
+    expect(TaskRepository.updateTask).toHaveBeenCalledWith(7, { title: 'updated', description: undefined, status: undefined });
+  });
+
+  test('deleteTask - success', async () => {
+    TaskRepository.getTaskById.mockResolvedValue({ id: 9 });
+    TaskRepository.deleteTask.mockResolvedValue(true);
+
+    const res = await TaskService.deleteTask(9);
+    expect(res).toEqual({ deleted: true });
+    expect(TaskRepository.deleteTask).toHaveBeenCalledWith(9);
   });
 
   test('deleteTask - not found', async () => {

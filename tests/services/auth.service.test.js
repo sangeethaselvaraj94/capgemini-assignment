@@ -28,6 +28,19 @@ describe('AuthService', () => {
     await expect(AuthService.register({ username: 'u', email: 'e', password: 'p' })).rejects.toHaveProperty('message', 'Email already registered');
   });
 
+  test('register - duplicate username', async () => {
+    UserRepository.findByEmail.mockResolvedValue(null);
+    UserRepository.findByUsername.mockResolvedValue({ id: 2 });
+    await expect(AuthService.register({ username: 'u', email: 'e', password: 'p' })).rejects.toHaveProperty('message', 'Username already registered');
+  });
+
+  test('login - invalid password', async () => {
+    const mockUser = { id: 1, username: 'u', email: 'e', password_hash: 'hashed' };
+    UserRepository.findByEmail.mockResolvedValue(mockUser);
+    bcrypt.compare.mockResolvedValue(false);
+    await expect(AuthService.login({ email: 'e', password: 'p' })).rejects.toHaveProperty('message', 'Invalid credentials');
+  });
+
   test('login - success', async () => {
     const mockUser = { id: 1, username: 'u', email: 'e', password_hash: 'hashed' };
     UserRepository.findByEmail.mockResolvedValue(mockUser);
@@ -42,5 +55,17 @@ describe('AuthService', () => {
   test('login - invalid credentials', async () => {
     UserRepository.findByEmail.mockResolvedValue(null);
     await expect(AuthService.login({ email: 'e', password: 'p' })).rejects.toHaveProperty('message', 'Invalid credentials');
+  });
+
+  test('getProfile - success', async () => {
+    UserRepository.findById.mockResolvedValue({ id: 1, username: 'u', email: 'e' });
+    const user = await AuthService.getProfile(1);
+    expect(user).toHaveProperty('id', 1);
+    expect(user).toHaveProperty('username', 'u');
+  });
+
+  test('getProfile - user not found', async () => {
+    UserRepository.findById.mockResolvedValue(null);
+    await expect(AuthService.getProfile(99)).rejects.toHaveProperty('message', 'User not found');
   });
 });
