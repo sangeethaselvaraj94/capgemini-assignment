@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: capgemini-assignment
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  NODE_ENV: production
+  PORT: 3000
+  DB_HOST: mysql
+  DB_PORT: 3306
+  DB_USER: root
+  DB_NAME: capgemini_assignment
+  JWT_SECRET: your_jwt_secret_here
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

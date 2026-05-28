@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capgemini-assignment
+  labels:
+    app: capgemini-assignment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capgemini-assignment
+  template:
+    metadata:
+      labels:
+        app: capgemini-assignment
+    spec:
+      containers:
+        - name: app
+          image: capgemini-assignment:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: capgemini-config
+            - secretRef:
+                name: capgemini-secret
